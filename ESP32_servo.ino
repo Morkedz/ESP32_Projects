@@ -19,15 +19,12 @@ void setup() {
 }
 
 void loop() {
-  myServo.write(0);
-  delay(1000);
-
-  myServo.write(90);
-  delay(1000);
-
-  myServo.write(180);
-  delay(1000);
-
-  myServo.write(90);
-  delay(1000);
+  for(int i = 0; i<181; i+=5){
+    myServo.write(i);
+    delay(60);
+  }
+  for(int j=180; j>0; j-=5){
+    myServo.write(j);
+    delay(60);
+  }
 }
