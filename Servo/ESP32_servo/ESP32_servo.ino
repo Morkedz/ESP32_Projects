@@ -7,6 +7,7 @@ Servo myServo;
 const int servoPin = 25;
 
 void setup() {
+  WiFi.begin("SSID", "PASSWORD");
 
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
