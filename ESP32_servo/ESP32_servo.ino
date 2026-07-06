@@ -1,4 +1,9 @@
 #include <ESP32Servo.h>
+#include <Wifi.h>
+#include "secrets.h"
+
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
 
 // Create a servo object
 Servo myServo;
@@ -7,8 +12,6 @@ Servo myServo;
 const int servoPin = 25;
 
 void setup() {
-  WiFi.begin("SSID", "PASSWORD");
-
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
@@ -17,6 +20,19 @@ void setup() {
   myServo.setPeriodHertz(50);
 
   myServo.attach(servoPin);
+
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, pass);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print("Searching...");
+  }
+  Serial.println("\nWiFi connected");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+  
+  server.begin();
 }
 
 void loop() {
