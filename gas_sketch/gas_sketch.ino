@@ -66,5 +66,14 @@ void setup() {
 }
 
 void loop() {
-  
+  if (!client.connected()) {
+    reconnectMQTT();
+  }
+  client.loop();
+
+  unsigned long now = millis();
+  if (now - lastMsgTime > INTERVAL_MS) {
+    lastMsgTime = now;
+    readAndPublish();
+  }
 }
