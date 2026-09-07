@@ -5,9 +5,9 @@
 const char* WIFI_SSID = WIFI_SSID;
 const char* WIFI_PASS = WIFI_PASSWORD;
 
-const char* MQTT_SERVER = "192.168.1.100";
+const char* MQTT_SERVER = SERVER_ADDRESS;
 const int   MQTT_PORT   = 1883;
-const char* MQTT_TOPIC  = "sensors/mq135/feed";
+const char* MQTT_TOPIC  = TOPIC_FIELD;
 const char* CLIENT_ID   = "ESP32_MQ135_Sensor";
 
 const int MQ135_PIN = 34;
@@ -26,6 +26,33 @@ void setupWiFi() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
   }
+}
+
+void reconnectMQTT() {
+  while (!client.connected()) {
+    if (client.connect(CLIENT_ID)) {
+      Serial.print("Comms Connected");
+    } else {
+      delay(5000);
+    }
+  }
+}
+
+void readAndPublish() {
+  // Read raw analog value (0 - 4095)
+  int rawAnalog = analogRead(MQ135_PIN);
+  
+  float voltage = (rawAnalog / 4095.0) * 3.3;
+
+  JsonDocument doc;
+  doc["device_id"] = CLIENT_ID;
+  doc["raw_adc"]   = rawAnalog;
+  doc["voltage"]   = voltage;
+
+  char jsonBuffer[256];
+  serializeJson(doc, jsonBuffer);
+
+  client.publish(MQTT_TOPIC, jsonBuffer);
 }
 
 void setup() {
