@@ -43,11 +43,13 @@ void readAndPublish() {
   int rawAnalog = analogRead(MQ135_PIN);
   
   float voltage = (rawAnalog / 4095.0) * 3.3;
+  float ppm = gasSensor.getPPM();
 
   JsonDocument doc;
   doc["device_id"] = CLIENT_ID;
   doc["raw_adc"]   = rawAnalog;
   doc["voltage"]   = voltage;
+  doc["PPM"]       = ppm;
 
   char jsonBuffer[256];
   serializeJson(doc, jsonBuffer);
@@ -58,6 +60,9 @@ void readAndPublish() {
 void setup() {
   Serial.begin(115200);
   
+  //NOTE: One time usage, is to get the specific sensor resistance value
+  //float rzero = gasSensor.getRZero();
+
   // Configure MQ-135 pin
   pinMode(MQ135_PIN, INPUT);
   
